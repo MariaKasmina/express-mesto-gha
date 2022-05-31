@@ -1,67 +1,67 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        res.status(404).send({message: 'Пользователи не найдены'})
-      } else res.send({user})
+        res.status(404).send({ message: 'Пользователи не найдены' });
+      } else res.send({ user });
     })
-    .catch(() => res.status(500).send({message: 'Ошибка по умолчанию.'}));
-}
+    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+};
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        res.status(404).send({message: `Пользователь не найден`})
-      } else res.send({user})
+        res.status(404).send({ message: 'Пользователь не найден' });
+      } else res.send({ user });
     })
-    .catch(() => res.status(500).send({message: 'Ошибка по умолчанию.'}));
-}
+    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+};
 
 const addUser = (req, res) => {
-  const {name, avatar, about} = req.body;
+  const { name, avatar, about } = req.body;
 
   if (!name || !about) {
-    return res.status(400).send({message: "Переданы некорректные данные при создании пользователя."});
+    res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
   }
 
-  User.create({name, about, avatar})
-    .then(user => res.status(201).send({user}))
-    .catch(() => res.status(500).send({message: 'Ошибка по умолчанию.'}));
-}
+  User.create({ name, about, avatar })
+    .then((user) => res.status(201).send({ user }))
+    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+};
 
 const updateUserInfo = (req, res) => {
-  const {name, about} = req.body;
+  const { name, about } = req.body;
 
-  if (typeof name !== String || typeof about !== String) {
-    return res.status(400).send({message: `Переданы некорректные данные при обновлении профиля.`})
+  if (typeof name !== 'string' || typeof about !== 'string') {
+    res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
   }
 
-  User.findByIdAndUpdate(req.user._id, {name: name, about: about})
-    .then(user => {
+  User.findByIdAndUpdate(req.user._id, { name, about })
+    .then((user) => {
       if (!user) {
-        res.status(404).send({message: `Пользователь с указанным _id не найден.`})
-      } else res.send({user})
+        res.status(404).send({ message: 'Пользователь с указанным _id не найден.' });
+      } else res.send({ user });
     })
-    .catch(err => res.status(500).send({message: 'Ошибка по умолчанию.'}));
-}
+    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+};
 
-const updateAvatar = (req, res) => {
-  const {avatar} = req.body;
+function updateAvatar(req, res) {
+  const { avatar } = req.body;
 
-  if (typeof avatar !== String) {
-    return res.status(400).send({message: `Переданы некорректные данные при обновлении аватара.`})
+  if (typeof avatar !== 'string') {
+    res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
   }
 
-  User.findByIdAndUpdate(req.user._id, {avatar: avatar})
-    .then(user => {
+  User.findByIdAndUpdate(req.user._id, { avatar })
+    .then((user) => {
       if (!user) {
-        res.status(404).send({message: `Пользователь с указанным _id не найден.`})
-      } else res.send({user})
+        res.status(404).send({ message: 'Пользователь с указанным _id не найден.' });
+      } else res.send({ user });
     })
-    .catch(err => res.status(500).send({message: 'Ошибка по умолчанию.'}));
+    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
 }
 
 module.exports = {
@@ -69,5 +69,5 @@ module.exports = {
   getUserById,
   addUser,
   updateUserInfo,
-  updateAvatar
-}
+  updateAvatar,
+};

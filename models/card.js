@@ -9,20 +9,20 @@ const cardSchema = new mongoose.Schema({
   },
   link: { // ссылка на картинку
     type: String,
-    required: true
+    required: true,
   },
   owner: { // id владельца
     type: mongoose.ObjectId,
-    required: true
+    required: true,
   },
   likes: { // массив лайков
     type: [mongoose.ObjectId],
-    default: []
+    default: [],
   },
   createdAt: { // дата создания
     type: Date,
-    default: Date.now()
-  }
+    default: Date.now(),
+  },
 });
 
 module.exports = mongoose.model('card', cardSchema);

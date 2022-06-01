@@ -17,7 +17,11 @@ const getUserById = (req, res) => {
         res.status(404).send({ message: 'Пользователь не найден' });
       } else res.send({ user });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 };
 
 const addUser = (req, res) => {
@@ -39,17 +43,17 @@ const addUser = (req, res) => {
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
 
-  if (typeof name !== 'string' || typeof about !== 'string') {
-    res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-  }
-
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => {
       if (!user) {
         res.status(404).send({ message: 'Пользователь с указанным _id не найден.' });
       } else res.send({ user });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 };
 
 function updateAvatar(req, res) {
@@ -65,7 +69,11 @@ function updateAvatar(req, res) {
         res.status(404).send({ message: 'Пользователь с указанным _id не найден.' });
       } else res.send({ user });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 }
 
 module.exports = {

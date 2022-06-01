@@ -22,7 +22,7 @@ function deleteCard(req, res) {
       } else res.send({ card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
       } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });

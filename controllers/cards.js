@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const User = require('../models/user');
 
 function getCards(req, res) {
   Card.find({})
@@ -8,17 +7,25 @@ function getCards(req, res) {
         res.status(404).send({ message: 'Карточки не найдены' });
       } else res.send({ card });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 }
 
 function deleteCard(req, res) {
-  User.findByIdAndRemove(req.params.cardId)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
       } else res.send({ card });
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 }
 
 function addCard(req, res) {
@@ -29,7 +36,11 @@ function addCard(req, res) {
   }
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(201).send({ card }))
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 }
 
 function addLike(req, res) {
@@ -44,9 +55,13 @@ function addLike(req, res) {
   ).then((card) => {
     if (!card) {
       res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
-    } else res.status(201).send({ card });
+    } else res.status(200).send({ card });
   })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 }
 
 function removeLike(req, res) {
@@ -61,7 +76,7 @@ function removeLike(req, res) {
   ).then((card) => {
     if (!card) {
       res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
-    } else res.status(201).send({ card });
+    } else res.status(200).send({ card });
   })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
 }

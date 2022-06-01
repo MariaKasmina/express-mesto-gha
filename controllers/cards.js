@@ -65,10 +65,6 @@ function addLike(req, res) {
 }
 
 function removeLike(req, res) {
-  if (!req.params.cardId) {
-    res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
-  }
-
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -78,7 +74,11 @@ function removeLike(req, res) {
       res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
     } else res.status(200).send({ card });
   })
-    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
 }
 
 module.exports = {

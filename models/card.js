@@ -12,13 +12,15 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   owner: { // id владельца
-    type: mongoose.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
     required: true,
   },
-  likes: { // массив лайков
-    type: [mongoose.ObjectId],
+  likes: [{ // массив лайков
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'user',
     default: [],
-  },
+  }],
   createdAt: { // дата создания
     type: Date,
     default: Date.now(),

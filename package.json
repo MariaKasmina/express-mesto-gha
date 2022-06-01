@@ -1,4 +1,8 @@
 {
+  "name": "mesto-server",
+  "version": "0.1.0",
+  "description": "Сервер для проекта Mesto",
+  "homepage": "https://github.com/MariaKasmina/express-mesto-gha",
   "dependencies": {
     "express": "^4.18.1",
     "mongoose": "^6.3.5",
@@ -11,7 +15,7 @@
     "nodemon": "^2.0.16"
   },
   "scripts": {
-    "lint": "npx eslint",
+    "lint": "npx eslint .",
     "dev": "nodemon app.js",
     "start": "node app.js"
   }

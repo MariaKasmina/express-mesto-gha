@@ -23,7 +23,7 @@ const getUserById = (req, res) => {
 const addUser = (req, res) => {
   const { name, avatar, about } = req.body;
 
-  if (!name || !about) {
+  if (!name || !about || !avatar) {
     res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
   }
 

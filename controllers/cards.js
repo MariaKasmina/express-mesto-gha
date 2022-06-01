@@ -3,9 +3,7 @@ const Card = require('../models/card');
 function getCards(req, res) {
   return Card.find({})
     .then((card) => {
-      if (!card) {
-        res.status(404).send({ message: 'Карточки не найдены' });
-      } else res.send({ card });
+      res.send({ card });
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {

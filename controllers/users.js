@@ -2,9 +2,7 @@ const User = require('../models/user');
 
 const getUsers = (req, res) => User.find({})
   .then((user) => {
-    if (!user) {
-      res.status(404).send({ message: 'Пользователи не найдены' });
-    } else res.send({ user });
+    res.send({ user });
   })
   .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
 

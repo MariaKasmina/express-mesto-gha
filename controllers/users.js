@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const getUsers = (req, res) => User.find({})
@@ -19,15 +20,19 @@ const getUserById = (req, res) => User.findById(req.params.userId)
   });
 
 const addUser = (req, res) => {
-  const { name, avatar, about } = req.body;
+  const {
+    name, avatar, about, password, email,
+  } = req.body;
 
-  return User.create({ name, about, avatar })
+  return bcrypt.hash(password, 10).then((hash) => User.create({
+    name, about, avatar, email, password: hash,
+  })
     .then((user) => res.status(201).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
-    });
+    }));
 };
 
 const updateUserInfo = (req, res) => {

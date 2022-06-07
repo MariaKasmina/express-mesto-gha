@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require("validator/es");
 
 const userSchema = new mongoose.Schema({
   name: { // у пользователя есть имя
@@ -17,6 +18,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator(v) {
+        return validator.isEmail(v);
+      }
+    }
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8
+  }
 });
 
 module.exports = mongoose.model('user', userSchema);

@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const usersRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const login = require('./routes/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -14,15 +15,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6296494d5888dedc140f6311',
-  };
-  next();
-});
-
 app.use('/signin', login);
 app.use('/signup', usersRouter);
+
+app.use(auth);
+// запросы ниже требуют авторизации
 
 app.use('/', usersRouter);
 app.use('/cards', cardRouter);

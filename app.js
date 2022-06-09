@@ -7,6 +7,8 @@ const cardRouter = require('./routes/cards');
 const login = require('./routes/users');
 const auth = require('./middlewares/auth');
 
+const { errors } = require('celebrate');
+
 const { PORT = 3000 } = process.env;
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -23,6 +25,8 @@ app.use(auth);
 
 app.use('/', usersRouter);
 app.use('/cards', cardRouter);
+
+app.use(errors);
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Маршрут не найден' });

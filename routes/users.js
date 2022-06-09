@@ -5,17 +5,19 @@ const {
   getUserById,
   addUser,
   updateUserInfo,
-  updateAvatar,
+  updateAvatar, login,
 } = require('../controllers/users');
 
-usersRouter.get('/', getUsers); // получение информации пользователей
+usersRouter.get('/users', getUsers); // получение информации пользователей
 
-usersRouter.get('/:userId', getUserById); // получение инфо о пользователе по id
+usersRouter.get('/users/:userId', getUserById); // получение инфо о пользователе по id
 
-usersRouter.post('/', addUser); // добавление пользователя
+usersRouter.post('/signup', addUser); // добавление пользователя
 
-usersRouter.patch('/me', updateUserInfo); // обновление данных текущего пользователя
+usersRouter.patch('/users/me', updateUserInfo); // обновление данных текущего пользователя
 
-usersRouter.patch('/me/avatar', updateAvatar); // обновление аватара текущего пользователя
+usersRouter.patch('/users/me/avatar', updateAvatar); // обновление аватара текущего пользователя
+
+usersRouter.post('/signin', login); // получение токена
 
 module.exports = usersRouter;

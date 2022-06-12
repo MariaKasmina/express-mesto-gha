@@ -16,8 +16,8 @@ usersRouter.get('/users', getUsers); // получение информации 
 usersRouter.get('/users/me', getCurrentUserInfo);
 
 usersRouter.get('/users/:userId', celebrate({
-  query: Joi.object().keys({
-    userId: Joi.string().min(24).max(24),
+  params: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24),
   }),
 }), getUserById); // получение инфо о пользователе по id
 

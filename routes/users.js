@@ -17,7 +17,7 @@ usersRouter.get('/users/me', getCurrentUserInfo);
 
 usersRouter.get('/users/:userId', celebrate({
   query: Joi.object().keys({
-    userId: Joi.string().min(24).max(24).required(),
+    userId: Joi.string().min(24).max(24),
   }),
 }), getUserById); // получение инфо о пользователе по id
 
@@ -25,6 +25,7 @@ usersRouter.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
+    // eslint-disable-next-line
     avatar: Joi.string().pattern(/^http[s]*:\/\/[a-z0-9.\-_~:/?#\[\]@!$&'()*+,;=]+|www\.[a-z0-9.-_~:?#\[\]@!$&'()*+,;=]+/),
     email: Joi.string().email().required(),
     password: Joi.string().required().min(8),
@@ -40,6 +41,7 @@ usersRouter.patch('/users/me', celebrate({
 
 usersRouter.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
+    // eslint-disable-next-line
     avatar: Joi.string().pattern(/^http[s]*:\/\/[a-z0-9.\-_~:/?#\[\]@!$&'()*+,;=]+|www\.[a-z0-9.-_~:?#\[\]@!$&'()*+,;=]+/),
   }),
 }), updateAvatar); // обновление аватара текущего пользователя

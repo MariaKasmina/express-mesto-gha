@@ -19,19 +19,9 @@ app.use(express.json());
 app.post('/signin', login);
 app.post('/signup', usersRouter);
 
-app.use(auth);
-// запросы ниже требуют авторизации
-
-app.use('/', usersRouter);
-app.use('/cards', cardRouter);
 
 app.use(errors());
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Маршрут не найден' });
-});
-
-// eslint-disable-next-line
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
@@ -43,7 +33,20 @@ app.use((err, req, res, next) => {
         ? 'Ошибка по умолчанию.'
         : message,
     });
+
+  next();
 });
+
+app.use((req, res) => {
+  res.status(404).send({ message: 'Маршрут не найден' });
+});
+
+app.use(auth);
+// запросы ниже требуют авторизации
+
+app.use('/', usersRouter);
+app.use('/cards', cardRouter);
+
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает

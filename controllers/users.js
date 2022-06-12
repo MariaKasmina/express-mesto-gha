@@ -42,8 +42,8 @@ const addUser = (req, res, next) => {
 
   return bcrypt.hash(password, 10).then((hash) => User.create({
     name, about, avatar, email, password: hash,
-  })
-    .then((user) => res.status(201).send({ user }))
+  }) // чтобы не возвращался хеш пароля описываем поля, которые нужны в ответе
+    .then((user) => res.status(201).send({ id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные при создании пользователя.');

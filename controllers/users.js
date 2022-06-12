@@ -20,6 +20,19 @@ const getUserById = (req, res) => User.findById(req.params.userId)
     } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
   });
 
+const getCurrentUserInfo = (req, res) => {
+  User.findById(req.user._id ).then((user) => {
+    if (!user) {
+      res.status(404).send({ message: 'Пользователь не найден' });
+    } else res.send({ user });
+  })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      } else res.status(500).send({ message: 'Ошибка по умолчанию.' });
+    });
+};
+
 const addUser = (req, res) => {
   const {
     name, avatar, about, password, email,
@@ -94,4 +107,5 @@ module.exports = {
   updateUserInfo,
   updateAvatar,
   login,
+  getCurrentUserInfo,
 };

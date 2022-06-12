@@ -17,7 +17,11 @@ function deleteCard(req, res) {
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
-      } else res.send({ card });
+      } else {
+        if(req.user._id === card.owner){ // проверяем - является ли пользователь владельцем
+          res.send({ card });
+        } else res.status(403).send({message: 'Ошибка прав доступа'})
+      }
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {

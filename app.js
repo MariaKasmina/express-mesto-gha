@@ -31,7 +31,8 @@ app.use((req, res) => {
   res.status(404).send({ message: 'Маршрут не найден' });
 });
 
-app.use((err, req, res) => {
+// eslint-disable-next-line
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
   res

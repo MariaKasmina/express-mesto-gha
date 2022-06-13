@@ -28,12 +28,12 @@ cardRouter.put('/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().alphanum().length(24),
   }),
-}),addLike); // добавление лайка
+}), addLike); // добавление лайка
 
 cardRouter.delete('/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().alphanum().length(24),
   }),
-}),removeLike); // удаление лайка
+}), removeLike); // удаление лайка
 
 module.exports = cardRouter;

@@ -19,7 +19,7 @@ app.use(express.json());
 app.post('/signin', login);
 app.post('/signup', usersRouter);
 
-app.use(auth);
+// app.use(auth);
 // запросы ниже требуют авторизации
 
 app.use('/', auth, usersRouter);
@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
         : message,
     });
 
-  next();
+  next(err);
 });
 
 app.use((req, res) => {

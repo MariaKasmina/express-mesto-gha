@@ -15,22 +15,40 @@ function getCards(req, res, next) {
     }).catch(next);
 }
 
-function deleteCard(req, res, next) {
-  return Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка с указанным _id не найдена.');
-      } else if (req.user._id === card.owner) { // проверяем - является ли пользователь владельцем
-        res.send({ card });
-      } else throw new ForbiddenError('Ошибка прав доступа');
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+/**
+ * Проверка прав на удаление конкретной карточки
+ * @param cardId
+ * @param currUserId
+ * @param next
+ */
+function hasRemoveCardAccess(cardId, currUserId, next) {
+  Card.findById(cardId).then((card) => {
+    if (card) {
+      if (currUserId !== card.owner.toString()) {
+        throw new ForbiddenError('Ошибка прав доступа');
       }
-      next(err);
-    }).catch(next);
+    }
+  }).catch(next);
+  return true;
 }
+
+const deleteCard = (req, res, next) => {
+  if (hasRemoveCardAccess(req.params.cardId, req.user._id, next)) {
+    Card.findByIdAndRemove(req.params.cardId)
+      .then((card) => {
+        if (!card) {
+          throw new NotFoundError('Карточка с указанным _id не найдена.');
+        }
+        res.send({ card });
+      })
+      .catch((err) => {
+        if (err.name === 'ValidationError' || err.name === 'CastError') {
+          throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+        }
+        next(err);
+      }).catch(next);
+  }
+};
 
 function addCard(req, res, next) {
   const { name, link } = req.body;
@@ -56,7 +74,8 @@ function addLike(req, res, next) {
   ).then((card) => {
     if (!card) {
       throw new NotFoundError('Передан несуществующий _id карточки.');
-    } res.status(200).send({ card });
+    }
+    res.status(200).send({ card });
   })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {

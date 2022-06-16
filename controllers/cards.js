@@ -10,44 +10,24 @@ function getCards(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
+      } else {
+        next(err);
       }
-    }).catch(next);
-}
-
-/**
- * Проверка прав на удаление конкретной карточки
- * @param cardId
- * @param currUserId
- * @param next
- */
-function hasRemoveCardAccess(cardId, currUserId, next) {
-  Card.findById(cardId).then((card) => {
-    if (card) {
-      if (currUserId !== card.owner.toString()) {
-        throw new ForbiddenError('Ошибка прав доступа');
-      }
-    }
-  }).catch(next);
-  return true;
+    });
 }
 
 const deleteCard = (req, res, next) => {
-  if (hasRemoveCardAccess(req.params.cardId, req.user._id, next)) {
-    Card.findByIdAndRemove(req.params.cardId)
-      .then((card) => {
-        if (!card) {
-          throw new NotFoundError('Карточка с указанным _id не найдена.');
-        }
-        res.send({ card });
-      })
-      .catch((err) => {
-        if (err.name === 'ValidationError' || err.name === 'CastError') {
-          throw new BadRequestError('Переданы некорректные данные при создании карточки.');
-        }
-        next(err);
-      }).catch(next);
-  }
+  const { id } = req.params;
+
+  Card.findById(id)
+    .orFail(() => new NotFoundError('Карточка с указанным _id не найдена.'))
+    .then((card) => {
+      if (!card.owner.equals(req.user._id)) {
+        return next(new ForbiddenError('Ошибка прав доступа'));
+      }
+      return card.remove().then(() => res.send({ message: 'Карточка удалена' }));
+    }).catch(next);
 };
 
 function addCard(req, res, next) {
@@ -79,10 +59,11 @@ function addLike(req, res, next) {
   })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
+      } else {
+        next(err);
       }
-      next(err);
-    }).catch(next);
+    });
 }
 
 function removeLike(req, res, next) {
@@ -97,10 +78,11 @@ function removeLike(req, res, next) {
   })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
+      } else {
+        next(err);
       }
-      next(err);
-    }).catch(next);
+    });
 }
 
 module.exports = {

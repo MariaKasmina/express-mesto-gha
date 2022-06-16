@@ -7,6 +7,7 @@ const usersRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const login = require('./routes/users');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/not-found-err');
 
 const { PORT = 3000 } = process.env;
 
@@ -19,11 +20,15 @@ app.use(express.json());
 app.post('/signin', login);
 app.post('/signup', usersRouter);
 
-// app.use(auth);
+app.use(auth);
 // запросы ниже требуют авторизации
 
-app.use('/', auth, usersRouter);
-app.use('/cards', auth, cardRouter);
+app.use('/', usersRouter);
+app.use('/cards', cardRouter);
+
+app.use(() => {
+  throw new NotFoundError('Маршрут не найден');
+});
 
 app.use(errors());
 
@@ -40,10 +45,6 @@ app.use((err, req, res, next) => {
     });
 
   next(err);
-});
-
-app.use((req, res) => {
-  res.status(404).send({ message: 'Маршрут не найден' });
 });
 
 app.listen(PORT, () => {

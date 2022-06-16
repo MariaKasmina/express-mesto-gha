@@ -48,12 +48,14 @@ const addUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       if (err.code === 11000) {
-        throw new ConflictError('Такой пользователь уже существует');
+        next(new ConflictError('Такой пользователь уже существует'));
+      } else {
+        next(err);
       }
-    }).catch(next));
+    }));
 };
 
 const updateUserInfo = (req, res, next) => {
@@ -67,10 +69,11 @@ const updateUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+      } else {
+        next(err);
       }
-      next(err);
-    }).catch(next);
+    });
 };
 
 function updateAvatar(req, res, next) {
@@ -89,9 +92,8 @@ function updateAvatar(req, res, next) {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
-      }
-      next(err);
-    }).catch(next);
+      } else next(err);
+    });
 }
 
 const login = (req, res, next) => {
